@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>📋 今日食堂菜单</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -78,7 +81,7 @@
     <div class="time">🕐 早餐 7:10-8:40 · 午餐 11:30-12:40 · 晚餐 17:30-18:20</div>
 </div>
 <div class="tabs" id="mealTabs">
-    <button class="tab-btn active" onclick="switchTab('breakfast',this)">🌅 早餐</button>
+    <button class="tab-btn" onclick="switchTab('breakfast',this)">🌅 早餐</button>
     <button class="tab-btn" onclick="switchTab('lunch',this)">☀️ 午餐</button>
     <button class="tab-btn" onclick="switchTab('dinner',this)">🌙 晚餐</button>
 </div>
@@ -146,10 +149,12 @@ function render(){
     }
     document.getElementById('mealTabs').style.display='flex';
     const dayData=menuData[today.cnDay];
+    const defaultMeal=getCurrentMeal();
     let fullHtml='';
     ['breakfast','lunch','dinner'].forEach(meal=>{
         const mealData=dayData&&dayData[meal];
-        const isActive=meal==='breakfast';
+        const isActive=meal===defaultMeal;
+        let html=`<div id="tab-${meal}" class="menu-container${isActive?' active':''}">`;
         let html=`<div id="tab-${meal}" class="menu-container${isActive?' active':''}">`;
         if(!mealData||Object.keys(mealData).length===0){
             html+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div><div style="padding:30px;text-align:center;color:#ccc">暂无菜品</div></div>`;
@@ -171,7 +176,24 @@ function render(){
         fullHtml+=html;
     });
     document.getElementById('menuContent').innerHTML=fullHtml;
+    
+    // 更新Tab按钮的active状态
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    const btns={breakfast:0,lunch:1,dinner:2};
+    const tabs=document.querySelectorAll('.tab-btn');
+    if(tabs[btns[defaultMeal]])tabs[btns[defaultMeal]].classList.add('active');
+    currentTab=defaultMeal;
+    
     cart.forEach(c=>{document.querySelectorAll('.menu-item[data-key="'+c.key+'"]').forEach(el=>el.classList.add('selected'))});
+}
+
+// ====== 根据时间自动判断当前餐点 ======
+function getCurrentMeal(){
+    const h=new Date().getHours();
+    if(h>=5&&h<10) return 'breakfast';   // 5:00-10:00 → 早餐
+    if(h>=10&&h<15) return 'lunch';      // 10:00-15:00 → 午餐
+    if(h>=15&&h<20) return 'dinner';     // 15:00-20:00 → 晚餐
+    return 'breakfast';                   // 其他时段默认早餐
 }
 
 function switchTab(tab,btn){
