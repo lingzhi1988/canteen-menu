@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📋 本周完整菜单</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#f7f8fa;color:#333;padding-bottom:20px}
+        .header{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;padding:28px 20px 20px;text-align:center}
+        .header h1{font-size:22px}
+        .header .date{font-size:13px;opacity:.85;margin-top:4px}
+        .tabs{display:flex;background:#fff;margin:12px 14px 0;border-radius:12px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .tab-btn{flex:1;padding:10px 0;border:none;background:transparent;font-size:14px;font-weight:500;color:#999;cursor:pointer;border-radius:10px}
+        .tab-btn.active{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
+        .container{padding:14px}
+        .day-card{background:#fff;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);overflow:hidden}
+        .day-header{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;padding:10px 16px;font-size:16px;font-weight:600}
+        .meal-section{padding:8px 16px}
+        .meal-section+.meal-section{border-top:1px solid #f0f0f0}
+        .meal-label{font-size:14px;font-weight:600;color:#ff6b35;margin-bottom:4px}
+        .cat-label{font-size:12px;font-weight:600;color:#999;margin:4px 0 2px 8px}
+        .item{display:flex;justify-content:space-between;padding:4px 0 4px 16px;font-size:13px;border-bottom:1px solid #f8f8f8}
+        .item .name{color:#333}
+        .item .price{color:#ff6b35;font-weight:600;font-size:12px}
+        .loading{text-align:center;padding:60px;color:#999}
+        .footer{text-align:center;padding:20px;font-size:12px;color:#ccc}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>📋 本周完整菜单</h1>
+    <div class="date">2026年7月27日 — 7月31日</div>
+</div>
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('breakfast',this)">🌅 早餐</button>
+    <button class="tab-btn" onclick="switchTab('lunch',this)">☀️ 午餐</button>
+    <button class="tab-btn" onclick="switchTab('dinner',this)">🌙 晚餐</button>
+</div>
+<div class="container" id="content"><div class="loading">⏳ 加载中...</div></div>
+<div class="footer">数据来源：data.json</div>
+<script>
+const DAYS=["星期一","星期二","星期三","星期四","星期五"];
+const MEAL_NAMES={breakfast:"早餐",lunch:"午餐",dinner:"晚餐"};
+let menuData=null;
+let curMeal='breakfast';
+
+async function init(){
+    try{
+        const res=await fetch('data.json?'+Date.now());
+        menuData=await res.json();
+        render();
+    }catch(e){
+        document.getElementById('content').innerHTML='<div class="loading">⚠️ 数据加载失败</div>';
+    }
+}
+
+function render(){
+    const meal=curMeal;
+    let html='';
+    DAYS.forEach(day=>{
+        const dayData=menuData&&menuData[day]&&menuData[day][meal];
+        html+=`<div class="day-card"><div class="day-header">${day} · ${MEAL_NAMES[meal]}</div>`;
+        if(!dayData||Object.keys(dayData).length===0){
+            html+=`<div style="padding:20px;text-align:center;color:#ccc">暂无菜品</div>`;
+        }else{
+            Object.keys(dayData).forEach(cat=>{
+                html+=`<div class="meal-section"><div class="cat-label">${cat}</div>`;
+                (dayData[cat]||[]).forEach(item=>{
+                    html+=`<div class="item"><span class="name">${item.name}</span><span class="price">¥${item.price}</span></div>`;
+                });
+                html+=`</div>`;
+            });
+        }
+        html+=`</div>`;
+    });
+    document.getElementById('content').innerHTML=html;
+}
+
+function switchTab(tab,btn){
+    curMeal=tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+}
+
+init();
+</script>
+</body>
+</html>

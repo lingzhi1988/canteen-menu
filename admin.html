@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔧 菜单管理</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#f0f2f5;color:#333;padding-bottom:40px}
+        .header{background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;padding:24px 16px 16px;text-align:center}
+        .header h1{font-size:20px}
+        .header p{font-size:12px;opacity:.85;margin-top:4px}
+        .container{padding:12px;max-width:800px;margin:0 auto}
+        .card{background:#fff;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+        .card-t{padding:12px 16px;font-size:15px;font-weight:600;background:#f8f9ff;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+        .card-b{padding:12px 16px}
+        .day-tabs{display:flex;overflow-x:auto;gap:6px;padding:4px}
+        .day-tab{flex-shrink:0;padding:8px 16px;border:none;border-radius:8px;background:#f0f0f0;font-size:13px;cursor:pointer}
+        .day-tab.active{background:#1a73e8;color:#fff}
+        .meal-tabs{display:flex;gap:6px;margin:8px 0}
+        .meal-tab{flex:1;padding:8px;border:none;border-radius:8px;background:#f0f0f0;font-size:13px;cursor:pointer;text-align:center}
+        .meal-tab.active{background:#ff6b35;color:#fff}
+        .edit-area{min-height:100px}
+        .cat-box{margin-bottom:10px}
+        .cat-h{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;color:#ff6b35}
+        .cat-h .btn-d{background:none;border:none;color:#ccc;font-size:14px;cursor:pointer}
+        .cat-h .btn-d:hover{color:#ef4444}
+        .ir{display:flex;align-items:center;gap:4px;padding:4px 0}
+        .ir input[type=text]{flex:1;padding:6px 8px;border:1px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;min-width:0}
+        .ir input[type=number]{width:65px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none}
+        .ir input:focus{border-color:#1a73e8}
+        .ir .btn-di{background:none;border:none;color:#ccc;font-size:14px;cursor:pointer;padding:2px}
+        .ir .btn-di:hover{color:#ef4444}
+        .btn-line{width:100%;padding:8px;border:1px dashed #ddd;border-radius:8px;background:none;font-size:13px;color:#999;cursor:pointer;margin-top:4px}
+        .btn-line:hover{border-color:#1a73e8;color:#1a73e8}
+        .actions{display:flex;flex-wrap:wrap;gap:8px}
+        .actions button{flex:1;min-width:80px;padding:10px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-align:center}
+        .btn-save{background:#1a73e8;color:#fff}
+        .btn-excel{background:#fefce8;color:#ca8a04}
+        .btn-dl{background:#f0fdf4;color:#16a34a}
+        .btn-gh{background:#f5f3ff;color:#7c3aed}
+        .btn-rst{background:#fef2f2;color:#dc2626}
+        .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;display:none;z-index:999;white-space:nowrap}
+        .toast.show{display:block;animation:ti .3s}
+        @keyframes ti{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        .gh-config{border-top:1px solid #f0f0f0;padding-top:12px;margin-top:12px;font-size:13px}
+        .gh-config label{display:block;color:#666;margin-bottom:4px;font-size:12px}
+        .gh-config input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:8px;outline:none}
+        .gh-config input:focus{border-color:#7c3aed}
+        .gh-config .btn-gh-save{background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;width:100%}
+        .gh-status{font-size:12px;color:#999;margin-top:6px}
+        .footer{text-align:center;padding:20px;font-size:12px;color:#ccc}
+        input[type=file]{display:none}
+        .empty-state{text-align:center;padding:30px 0;color:#ccc;font-size:14px}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🔧 菜单管理后台</h1>
+    <p>编辑后导出 data.json 或直接保存到 GitHub</p>
+</div>
+<div class="container">
+    <div class="card">
+        <div class="card-t">📅 选择日期</div>
+        <div class="card-b"><div class="day-tabs" id="dayTabs"></div></div>
+    </div>
+    <div class="card">
+        <div class="card-t">🍽️ 选择餐点</div>
+        <div class="card-b"><div class="meal-tabs" id="mealTabs"></div></div>
+    </div>
+    <div class="card">
+        <div class="card-t"><span id="editTitle">星期一 · 早餐</span></div>
+        <div class="card-b edit-area" id="editArea"></div>
+        <div style="padding:0 16px 12px"><button class="btn-line" onclick="addCategory()">➕ 添加新分类</button></div>
+    </div>
+    <div class="card">
+        <div class="card-b">
+            <div class="actions">
+                <button class="btn-excel" onclick="importExcel()">📊 导入Excel</button>
+                <button class="btn-dl" onclick="downloadJSON()">⬇️ 导出 data.json</button>
+                <button class="btn-gh" onclick="saveToGitHub()">⬆️ 保存到 GitHub</button>
+                <button class="btn-rst" onclick="loadFromData()">🔄 重新加载</button>
+            </div>
+            <!-- GitHub 配置 -->
+            <div class="gh-config">
+                <label>GitHub Token（第一次使用需要配置，之后自动保存）</label>
+                <input type="text" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                <label>仓库名（如 lingzhi1988/canteen-menu）</label>
+                <input type="text" id="ghRepo" value="lingzhi1988/canteen-menu">
+                <button class="btn-gh-save" onclick="saveToGitHub()">⬆️ 保存到 GitHub</button>
+                <div class="gh-status" id="ghStatus">配置好 Token 后点此按钮，自动更新 data.json</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS=["星期一","星期二","星期三","星期四","星期五"];
+const MEALS=["breakfast","lunch","dinner"];
+const MEAL_NAMES={breakfast:"早餐",lunch:"午餐",dinner:"晚餐"};
+let menuData={};
+let curDay=0,curMeal="breakfast";
+
+// ====== 初始化 ======
+async function init(){
+    // 从 localStorage 读取 GitHub 配置
+    const savedToken=localStorage.getItem('gh_token');
+    const savedRepo=localStorage.getItem('gh_repo');
+    if(savedToken)document.getElementById('ghToken').value=savedToken;
+    if(savedRepo)document.getElementById('ghRepo').value=savedRepo;
+    
+    // 渲染日期和餐点Tab
+    const dayHtml=DAYS.map((d,i)=>`<button class="day-tab${i===0?' active':''}" onclick="selDay(${i},this)">${d}</button>`).join('');
+    document.getElementById('dayTabs').innerHTML=dayHtml;
+    const mealHtml=MEALS.map(m=>`<button class="meal-tab${m==='breakfast'?' active':''}" onclick="selMeal('${m}',this)">${{'breakfast':'🌅 早餐','lunch':'☀️ 午餐','dinner':'🌙 晚餐'}[m]}</button>`).join('');
+    document.getElementById('mealTabs').innerHTML=mealHtml;
+    
+    await loadFromData();
+}
+
+// ====== 数据加载 ======
+async function loadFromData(){
+    try{
+        const res=await fetch('data.json?'+Date.now());
+        menuData=await res.json();
+        showToast('✅ 已从 data.json 加载数据');
+    }catch(e){
+        showToast('⚠️ data.json 加载失败，使用内置默认数据');
+        menuData=JSON.parse(JSON.stringify(getDefaultData()));
+    }
+    renderEdit();
+}
+
+function getDefaultData(){
+    // 内置默认数据（精简）
+    return {"星期一":{"breakfast":{"🥗 凉菜":[{"name":"炝拌茴子白丝","price":0.2}]}},"星期二":{"breakfast":{"🥗 凉菜":[{"name":"炝拌黑咸菜丝","price":0.5}]}},"星期三":{"breakfast":{"🥗 凉菜":[{"name":"炝拌卷心菜","price":0.2}]}},"星期四":{"breakfast":{"🥗 凉菜":[{"name":"四川泡菜","price":0.5}]}},"星期五":{"breakfast":{"🥗 凉菜":[{"name":"炝拌圆白菜","price":0.2}]}}};
+}
+
+// ====== 切换 ======
+function selDay(idx,btn){
+    curDay=idx;
+    document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderEdit();
+}
+function selMeal(meal,btn){
+    curMeal=meal;
+    document.querySelectorAll('.meal-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderEdit();
+}
+
+// ====== 获取当前数据 ======
+function getMealData(){
+    const day=DAYS[curDay];
+    if(!menuData[day])menuData[day]={};
+    if(!menuData[day][curMeal])menuData[day][curMeal]={};
+    return menuData[day][curMeal];
+}
+function setMealData(data){
+    menuData[DAYS[curDay]][curMeal]=data;
+}
+
+// ====== 渲染编辑区 ======
+function renderEdit(){
+    document.getElementById('editTitle').textContent=DAYS[curDay]+' · '+MEAL_NAMES[curMeal];
+    const area=document.getElementById('editArea');
+    const data=getMealData();
+    const keys=Object.keys(data);
+    if(keys.length===0){
+        area.innerHTML='<div class="empty-state">暂无分类，点击下方添加</div>';
+        return;
+    }
+    let html='';
+    keys.forEach((cat,ci)=>{
+        html+=`<div class="cat-box"><div class="cat-h"><span>${cat}</span><button class="btn-d" onclick="delCat(${ci})">✕</button></div>`;
+        (data[cat]||[]).forEach((item,ii)=>{
+            html+=`<div class="ir">
+                <input type="text" value="${item.name}" onchange="editItem(${ci},${ii},'name',this.value)">
+                <input type="number" value="${item.price}" step="0.1" onchange="editItem(${ci},${ii},'price',parseFloat(this.value)||0)">
+                <button class="btn-di" onclick="delItem(${ci},${ii})">✕</button>
+            </div>`;
+        });
+        html+=`<button class="btn-line" onclick="addItem(${ci})">➕ 添加菜品</button></div>`;
+    });
+    area.innerHTML=html;
+}
+
+function editItem(ci,ii,field,val){
+    const data=getMealData();
+    const keys=Object.keys(data);
+    data[keys[ci]][ii][field]=val;
+    setMealData(data);
+}
+function delCat(ci){
+    if(!confirm('删除此分类？'))return;
+    const data=getMealData();
+    const keys=Object.keys(data);
+    delete data[keys[ci]];
+    setMealData(data);
+    renderEdit();
+}
+function delItem(ci,ii){
+    if(!confirm('删除此菜品？'))return;
+    const data=getMealData();
+    const keys=Object.keys(data);
+    data[keys[ci]].splice(ii,1);
+    if(data[keys[ci]].length===0)delete data[keys[ci]];
+    setMealData(data);
+    renderEdit();
+}
+function addItem(ci){
+    const data=getMealData();
+    const keys=Object.keys(data);
+    data[keys[ci]].push({name:'新菜品',price:0});
+    setMealData(data);
+    renderEdit();
+}
+function addCategory(){
+    const name=prompt('分类名称（如：🥗 凉菜）：');
+    if(!name||!name.trim())return;
+    const data=getMealData();
+    data[name.trim()]=[];
+    setMealData(data);
+    renderEdit();
+}
+
+// ====== 导入Excel ======
+function importExcel(){
+    const input=document.createElement('input');
+    input.type='file';
+    input.accept='.xls,.xlsx';
+    input.onchange=async function(e){
+        const file=e.target.files[0];
+        if(!file)return;
+        const reader=new FileReader();
+        reader.onload=function(ev){
+            try{
+                const data=new Uint8Array(ev.target.result);
+                const wb=XLSX.read(data,{type:'array'});
+                const json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+                parseExcel(json);
+            }catch(err){showToast('❌ 解析失败：'+err.message)}
+        };
+        reader.readAsArrayBuffer(file);
+    };
+    input.click();
+}
+
+function parseExcel(rows){
+    const mealMap={'早餐':'breakfast','午餐':'lunch','晚餐':'dinner'};
+    let meal=null,cat=null;
+    for(let i=1;i<rows.length;i++){
+        const r=rows[i];
+        if(!r||r.length<4)continue;
+        const c0=(r[0]||'').toString().trim();
+        const c1=(r[1]||'').toString().trim();
+        if(mealMap[c0]){meal=mealMap[c0];cat=c1||null;continue;}
+        if(!meal)continue;
+        if(c0===''&&c1&&r[3]){cat=c1;}
+        for(let j=3;j<Math.min(r.length,8);j++){
+            const cell=(r[j]||'').toString().trim();
+            if(!cell)continue;
+            const dayIdx=j-3;
+            if(dayIdx>=DAYS.length)continue;
+            const day=DAYS[dayIdx];
+            if(!menuData[day])menuData[day]={};
+            if(!menuData[day][meal])menuData[day][meal]={};
+            const catName=cat||'其他';
+            if(!menuData[day][meal][catName])menuData[day][meal][catName]=[];
+            const m=cell.match(/(.+?)([\d.]+)$/);
+            const name=m?m[1].trim():cell;
+            const price=m?parseFloat(m[2]):0;
+            if(!menuData[day][meal][catName].some(ex=>ex.name===name))
+                menuData[day][meal][catName].push({name,price});
+        }
+    }
+    renderEdit();
+    showToast('✅ Excel导入成功！请导出 data.json 或保存到 GitHub');
+}
+
+// ====== 导出 data.json ======
+function downloadJSON(){
+    const json=JSON.stringify(menuData,null,2);
+    const blob=new Blob([json],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='data.json';
+    a.click();
+    showToast('✅ data.json 已下载');
+}
+
+// ====== 保存到 GitHub ======
+async function saveToGitHub(){
+    const token=document.getElementById('ghToken').value.trim();
+    const repo=document.getElementById('ghRepo').value.trim();
+    if(!token||!repo){
+        showToast('⚠️ 请先填写 GitHub Token 和仓库名');
+        return;
+    }
+    // 保存配置
+    localStorage.setItem('gh_token',token);
+    localStorage.setItem('gh_repo',repo);
+    
+    const status=document.getElementById('ghStatus');
+    status.textContent='⏳ 正在保存到 GitHub...';
+    
+    try{
+        const json=JSON.stringify(menuData,null,2);
+        const content=btoa(unescape(encodeURIComponent(json)));
+        
+        // 先获取当前文件的 SHA（如果是更新已有文件）
+        let sha=null;
+        try{
+            const getRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
+                headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}
+            });
+            if(getRes.ok){
+                const existing=await getRes.json();
+                sha=existing.sha;
+            }
+        }catch(e){}
+        
+        // 上传/更新文件
+        const body={message:'更新菜单数据',content:content};
+        if(sha)body.sha=sha;
+        
+        const res=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
+            method:'PUT',
+            headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+            body:JSON.stringify(body)
+        });
+        
+        if(res.ok){
+            status.textContent='✅ 已保存到 GitHub！员工刷新即可看到新菜单';
+            showToast('✅ 已保存到 GitHub！');
+        }else{
+            const err=await res.json();
+            status.textContent='❌ 保存失败：'+err.message;
+            showToast('❌ 保存失败');
+        }
+    }catch(e){
+        status.textContent='❌ 保存失败：'+e.message;
+        showToast('❌ 保存失败');
+    }
+}
+
+// ====== Toast ======
+function showToast(msg){
+    const el=document.getElementById('toast');
+    el.textContent=msg;
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'),2000);
+}
+
+init();
+</script>
+</body>
+</html>
