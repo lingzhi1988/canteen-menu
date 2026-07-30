@@ -155,7 +155,6 @@ function render(){
         const mealData=dayData&&dayData[meal];
         const isActive=meal===defaultMeal;
         let html=`<div id="tab-${meal}" class="menu-container${isActive?' active':''}">`;
-        let html=`<div id="tab-${meal}" class="menu-container${isActive?' active':''}">`;
         if(!mealData||Object.keys(mealData).length===0){
             html+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div><div style="padding:30px;text-align:center;color:#ccc">暂无菜品</div></div>`;
         }else{
