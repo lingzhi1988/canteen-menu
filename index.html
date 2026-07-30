@@ -12,65 +12,60 @@
         body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#f7f8fa;color:#333;padding-bottom:80px}
         .header{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;padding:28px 20px 20px;text-align:center;position:relative}
         .header::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:#f7f8fa;border-radius:20px 20px 0 0}
-        .header .badge{display:inline-block;background:rgba(255,255,255,.25);padding:3px 12px;border-radius:20px;font-size:12px;margin-bottom:6px}
+        .badge{display:inline-block;background:rgba(255,255,255,.25);padding:3px 12px;border-radius:20px;font-size:12px;margin-bottom:6px}
         .header h1{font-size:22px;font-weight:700}
         .header .date{font-size:14px;opacity:.9;margin-top:2px}
-        .header .time{font-size:12px;opacity:.85;margin-top:8px;line-height:1.6}
         .tabs{display:flex;background:#fff;margin:16px 14px 0;border-radius:12px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
         .tab-btn{flex:1;padding:10px 0;border:none;background:transparent;font-size:15px;font-weight:500;color:#999;cursor:pointer;border-radius:10px;transition:all .3s}
         .tab-btn.active{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;box-shadow:0 2px 8px rgba(255,107,53,.3)}
-        .menu-container{padding:14px;display:none}
-        .menu-container.active{display:block;animation:fadeIn .3s}
+        .mc{padding:14px;display:none}.mc.active{display:block;animation:fadeIn .3s}
         @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         .day-card{background:#fff;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);overflow:hidden}
         .day-header{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;padding:10px 16px;font-size:16px;font-weight:600}
-        .cat-section{padding:4px 16px 8px;border-bottom:1px dashed #f0f0f0}
-        .cat-label{font-size:13px;font-weight:600;color:#f7931e;padding:6px 0 2px}
-        .menu-item{display:flex;justify-content:space-between;align-items:center;padding:7px 8px 7px 36px;font-size:14px;border-bottom:1px solid #f8f8f8;cursor:pointer;position:relative;border-radius:6px;margin:1px 0;user-select:none;transition:background .2s}
-        .menu-item:hover{background:#fffaf5}
-        .menu-item .name{color:#333;flex:1}
-        .menu-item .price{color:#ff6b35;font-weight:600;font-size:13px;background:#fff5f0;padding:1px 8px;border-radius:10px;transition:all .2s}
-        .menu-item .check{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:2px solid #ddd;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:#fff}
-        .menu-item.selected{background:#f0fdf4}
-        .menu-item.selected .name{color:#166534;font-weight:500}
-        .menu-item.selected .price{background:#22c55e;color:#fff}
-        .menu-item.selected .check{background:#22c55e;border-color:#22c55e}
-        .menu-item.selected .check::after{content:'✓'}
-        .weekend{text-align:center;padding:60px 20px;background:#fff;border-radius:14px;margin:14px}
-        .weekend .icon{font-size:48px;margin-bottom:12px}
-        .weekend h3{font-size:18px;color:#333}
-        .weekend p{font-size:14px;color:#999;margin-top:6px}
-        .nav-links{display:flex;gap:10px;margin:0 14px}
-        .nav-btn{flex:1;padding:10px;border:none;border-radius:10px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-        .nav-btn.full{background:#fff;color:#1a73e8;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-        .nav-btn.admin{background:#fff;color:#666;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-        .cart-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.1);padding:10px 16px;display:flex;align-items:center;gap:12px;z-index:100;transition:transform .3s}
-        .cart-bar.empty{transform:translateY(100%)}
-        .cart-icon{width:40px;height:40px;background:linear-gradient(135deg,#ff6b35,#f7931e);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;position:relative;flex-shrink:0}
-        .cart-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-        .cart-info{flex:1;min-width:0}
-        .cart-info .preview{font-size:12px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .cart-info .total{font-size:18px;font-weight:700;color:#ff6b35}
-        .cart-info .total small{font-size:12px;font-weight:400;color:#999}
-        .btn-checkout{padding:10px 22px;border:none;border-radius:10px;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:15px;font-weight:600;cursor:pointer;flex-shrink:0}
-        .checkout-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;justify-content:center;align-items:flex-end}
-        .checkout-overlay.show{display:flex}
-        .checkout-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 30px;width:100%;max-height:75vh;overflow-y:auto;animation:sheetUp .3s}
-        @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-        .checkout-sheet .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #f0f0f0}
-        .checkout-sheet .sh h2{font-size:18px}
-        .checkout-sheet .sh-close{background:none;border:none;font-size:22px;color:#999;cursor:pointer;padding:4px}
-        .ci{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
-        .ci .ci-l{display:flex;align-items:center;gap:8px;flex:1}
-        .ci .ci-n{color:#333}
-        .ci .ci-p{color:#ff6b35;font-weight:600}
-        .ci .ci-d{background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:2px 6px}
-        .ci .ci-d:hover{color:#ef4444}
-        .ct{display:flex;justify-content:space-between;padding:14px 0 4px;font-size:18px;font-weight:700}
-        .ct .ct-p{color:#ff6b35}
-        .empty-cart{text-align:center;padding:30px 0;color:#ccc}
-        .footer{text-align:center;padding:20px 14px;font-size:12px;color:#ccc}
-        @media(min-width:768px){.menu-container,.tabs,.nav-links{max-width:800px;margin-left:auto;margin-right:auto}}
+        .cs{padding:4px 16px 8px;border-bottom:1px dashed #f0f0f0}
+        .cl{font-size:13px;font-weight:600;color:#f7931e;padding:6px 0 2px}
+        .mi{display:flex;justify-content:space-between;align-items:center;padding:7px 8px 7px 36px;font-size:14px;border-bottom:1px solid #f8f8f8;cursor:pointer;position:relative;border-radius:6px;margin:1px 0;user-select:none}
+        .mi:hover{background:#fffaf5}
+        .mi .n{color:#333;flex:1}
+        .mi .p{color:#ff6b35;font-weight:600;font-size:13px;background:#fff5f0;padding:1px 8px;border-radius:10px}
+        .mi .ck{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:2px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:#fff}
+        .mi.sel{background:#f0fdf4}
+        .mi.sel .n{color:#166534;font-weight:500}
+        .mi.sel .p{background:#22c55e;color:#fff}
+        .mi.sel .ck{background:#22c55e;border-color:#22c55e}
+        .mi.sel .ck::after{content:'✓'}
+        .wk{text-align:center;padding:60px 20px;background:#fff;border-radius:14px;margin:14px}
+        .wk .bi{font-size:48px;margin-bottom:12px}
+        .info{background:#fff;margin:0 14px 14px;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:13px;line-height:1.8;color:#666}
+        .info .t{font-weight:600;color:#333;margin-bottom:4px}
+        .nav{display:flex;gap:10px;margin:0 14px 14px}
+        .nv{flex:1;display:block;padding:10px;border:none;border-radius:10px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none;background:#fff;color:#1a73e8;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+        .cb{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.1);padding:10px 16px;display:flex;align-items:center;gap:12px;z-index:100;transition:transform .3s}
+        .cb.et{transform:translateY(100%)}
+        .ci{width:40px;height:40px;background:linear-gradient(135deg,#ff6b35,#f7931e);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;position:relative;flex-shrink:0}
+        .ci .bd{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+        .ci2{flex:1;min-width:0}
+        .ci2 .pr{font-size:12px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ci2 .tl{font-size:18px;font-weight:700;color:#ff6b35}
+        .ci2 .tl small{font-size:12px;font-weight:400;color:#999}
+        .bch{padding:10px 22px;border:none;border-radius:10px;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:15px;font-weight:600;cursor:pointer;flex-shrink:0}
+        .co{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;justify-content:center;align-items:flex-end}
+        .co.sh{display:flex}
+        .cs2{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 30px;width:100%;max-height:75vh;overflow-y:auto;animation:su .3s}
+        @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .cs2 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #f0f0f0}
+        .cs2 .sh h2{font-size:18px}
+        .cs2 .sc{background:none;border:none;font-size:22px;color:#999;cursor:pointer;padding:4px}
+        .c2i{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:14px}
+        .c2i .l{display:flex;align-items:center;gap:8px;flex:1}.c2i .nm{color:#333}
+        .c2i .pr2{color:#ff6b35;font-weight:600}
+        .c2i .dl{background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:2px 6px}
+        .c2i .dl:hover{color:#ef4444}
+        .ct2{display:flex;justify-content:space-between;padding:14px 0 4px;font-size:18px;font-weight:700}
+        .ct2 .cp{color:#ff6b35}
+        .ec{text-align:center;padding:30px 0;color:#ccc}
+        .ft{text-align:center;padding:20px 14px;font-size:12px;color:#ccc}
+        @media(min-width:768px){.mc,.tabs,.nav,.info{max-width:800px;margin-left:auto;margin-right:auto}}
     </style>
 </head>
 <body>
@@ -78,42 +73,27 @@
     <div class="badge" id="todayBadge">📅 今天</div>
     <h1>职工食堂</h1>
     <div class="date" id="todayDate"></div>
-    <div class="time">🕐 早餐 7:10-8:40 · 午餐 11:30-12:40 · 晚餐 17:30-18:20</div>
 </div>
-<div class="tabs" id="mealTabs">
-    <button class="tab-btn" onclick="switchTab('breakfast',this)">🌅 早餐</button>
-    <button class="tab-btn" onclick="switchTab('lunch',this)">☀️ 午餐</button>
-    <button class="tab-btn" onclick="switchTab('dinner',this)">🌙 晚餐</button>
-</div>
+<div class="tabs" id="mealTabs"></div>
 <div id="menuContent"></div>
-<div class="nav-links">
-    <a class="nav-btn full" href="menu.html" target="_blank">📋 本周完整菜单</a>
-</div>
-
-<!-- 开餐时间 -->
-<div style="background:#fff;margin:0 14px 14px;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:13px;line-height:1.8;color:#666">
-    <div style="font-weight:600;color:#333;margin-bottom:4px">⏰ 开餐时间</div>
+<div class="nav"><a class="nv" href="menu.html" target="_blank">📋 本周完整菜单</a></div>
+<div class="info">
+    <div class="t">⏰ 开餐时间</div>
     负一层：早餐 7:10-8:40 · 午餐 11:30-12:40 · 晚餐 17:30-18:20<br>
     二层：午餐 11:40-12:30 · 晚餐 17:30-18:20<br>
     周六、日（仅午餐）：负一层 11:40-12:20
 </div>
-
-<div class="footer">点击菜品可加入购物车 · 员工食堂</div>
-
-<div class="cart-bar empty" id="cartBar">
-    <div class="cart-icon">🛒<div class="cart-badge" id="cartBadge">0</div></div>
-    <div class="cart-info">
-        <div class="preview" id="cartPreview">尚未选择菜品</div>
-        <div class="total" id="cartTotal">¥0 <small>已选 <span id="cartCount">0</span> 项</small></div>
-    </div>
-    <button class="btn-checkout" onclick="showCheckout()">查看清单</button>
+<div class="ft">点击菜品可加入购物车</div>
+<div class="cb et" id="cartBar">
+    <div class="ci">🛒<div class="bd" id="cartBadge">0</div></div>
+    <div class="ci2"><div class="pr" id="cartPreview">尚未选择菜品</div><div class="tl" id="cartTotal">¥0 <small>已选 <span id="cartCount">0</span> 项</small></div></div>
+    <button class="bch" onclick="showCheckout()">查看清单</button>
 </div>
-
-<div class="checkout-overlay" id="checkoutOverlay">
-    <div class="checkout-sheet">
-        <div class="sh"><h2>🧾 我的点菜单</h2><button class="sh-close" onclick="closeCheckout()">✕</button></div>
+<div class="co" id="checkoutOverlay">
+    <div class="cs2">
+        <div class="sh"><h2>🧾 我的点菜单</h2><button class="sc" onclick="closeCheckout()">✕</button></div>
         <div id="checkoutList"></div>
-        <div class="ct"><span>合计</span><span class="ct-p" id="checkoutTotal">¥0</span></div>
+        <div class="ct2"><span>合计</span><span class="cp" id="checkoutTotal">¥0</span></div>
         <div style="text-align:center;margin-top:12px;font-size:12px;color:#ccc">点击 ✕ 可移除</div>
     </div>
 </div>
@@ -126,16 +106,37 @@ let menuData=null;
 let cart=[];
 let currentTab='breakfast';
 
-function getToday(){const n=new Date();return{day:n.getDay(),dateStr:n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日',cnDay:DAY_MAP[n.getDay()]}}
+function getToday(){
+    const n=new Date();
+    return{day:n.getDay(),dateStr:n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日',cnDay:DAY_MAP[n.getDay()]}
+}
+
+function getCurrentMeal(){
+    const h=new Date().getHours();
+    if(h>=5&&h<10) return 'breakfast';
+    if(h>=10&&h<15) return 'lunch';
+    if(h>=15&&h<20) return 'dinner';
+    return 'breakfast';
+}
 
 async function loadData(){
     try{
-        const res=await fetch('data.json?'+new Date().getTime());
+        const res=await fetch('data.json?'+Date.now());
         menuData=await res.json();
+        initTabs();
         render();
     }catch(e){
-        document.getElementById('menuContent').innerHTML='<div style="text-align:center;padding:40px;color:#999">⚠️ 数据加载失败，请检查 data.json 是否存在</div>';
+        document.getElementById('menuContent').innerHTML='<div style="text-align:center;padding:40px;color:#999">⚠️ 数据加载失败</div>';
     }
+}
+
+function initTabs(){
+    const meals=['breakfast','lunch','dinner'];
+    const labels=['🌅 早餐','☀️ 午餐','🌙 晚餐'];
+    const defaultMeal=getCurrentMeal();
+    const html=meals.map((m,i)=>`<button class="tab-btn${m===defaultMeal?' active':''}" onclick="switchTab('${m}',this)">${labels[i]}</button>`).join('');
+    document.getElementById('mealTabs').innerHTML=html;
+    currentTab=defaultMeal;
 }
 
 function render(){
@@ -143,71 +144,53 @@ function render(){
     document.getElementById('todayDate').textContent=today.dateStr+' '+DAY_NAMES[today.day];
     document.getElementById('todayBadge').textContent='📅 '+today.dayName;
     if(!today.cnDay){
-        document.getElementById('menuContent').innerHTML='<div class="weekend"><div class="icon">😴</div><h3>今日休息，无供餐</h3><p>今天是'+DAY_NAMES[today.day]+'，食堂不供餐哦～<br>周一到周五再来！</p></div>';
+        document.getElementById('menuContent').innerHTML='<div class="wk"><div class="bi">😴</div><h3>今日休息，无供餐</h3><p>周一到周五再来！</p></div>';
         document.getElementById('mealTabs').style.display='none';
         return;
     }
     document.getElementById('mealTabs').style.display='flex';
     const dayData=menuData[today.cnDay];
-    const defaultMeal=getCurrentMeal();
     let fullHtml='';
     ['breakfast','lunch','dinner'].forEach(meal=>{
         const mealData=dayData&&dayData[meal];
-        const isActive=meal===defaultMeal;
-        let html=`<div id="tab-${meal}" class="menu-container${isActive?' active':''}">`;
+        const isActive=meal===currentTab;
+        let h=`<div id="tab-${meal}" class="mc${isActive?' active':''}">`;
         if(!mealData||Object.keys(mealData).length===0){
-            html+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div><div style="padding:30px;text-align:center;color:#ccc">暂无菜品</div></div>`;
+            h+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div><div style="padding:30px;text-align:center;color:#ccc">暂无菜品</div></div>`;
         }else{
-            html+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div>`;
+            h+=`<div class="day-card"><div class="day-header">${today.cnDay} · ${MEAL_NAMES[meal]}</div>`;
             Object.keys(mealData).forEach(cat=>{
-                const items=mealData[cat]||[];
-                html+=`<div class="cat-section"><div class="cat-label">${cat}</div>`;
-                items.forEach((item,idx)=>{
+                h+=`<div class="cs"><div class="cl">${cat}</div>`;
+                mealData[cat].forEach((item,idx)=>{
                     const key=today.cnDay+'_'+meal+'_'+cat+'_'+idx;
-                    html+=`<div class="menu-item" data-key="${key}" onclick="toggleItem(this,'${key}','${item.name.replace(/'/g,"\\'")}',${item.price})">
-                        <span class="check"></span><span class="name">${item.name}</span><span class="price">¥${item.price}</span></div>`;
+                    h+=`<div class="mi" data-key="${key}" onclick="toggleItem('${key}','${item.name}','${item.price}',this)">
+                        <span class="ck"></span><span class="n">${item.name}</span><span class="p">¥${item.price}</span></div>`;
                 });
-                html+=`</div>`;
+                h+=`</div>`;
             });
-            html+=`</div>`;
+            h+=`</div>`;
         }
-        html+=`</div>`;
-        fullHtml+=html;
+        h+=`</div>`;
+        fullHtml+=h;
     });
     document.getElementById('menuContent').innerHTML=fullHtml;
-    
-    // 更新Tab按钮的active状态
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    const btns={breakfast:0,lunch:1,dinner:2};
-    const tabs=document.querySelectorAll('.tab-btn');
-    if(tabs[btns[defaultMeal]])tabs[btns[defaultMeal]].classList.add('active');
-    currentTab=defaultMeal;
-    
-    cart.forEach(c=>{document.querySelectorAll('.menu-item[data-key="'+c.key+'"]').forEach(el=>el.classList.add('selected'))});
-}
-
-// ====== 根据时间自动判断当前餐点 ======
-function getCurrentMeal(){
-    const h=new Date().getHours();
-    if(h>=5&&h<10) return 'breakfast';   // 5:00-10:00 → 早餐
-    if(h>=10&&h<15) return 'lunch';      // 10:00-15:00 → 午餐
-    if(h>=15&&h<20) return 'dinner';     // 15:00-20:00 → 晚餐
-    return 'breakfast';                   // 其他时段默认早餐
+    // 恢复选中
+    cart.forEach(c=>{document.querySelectorAll('.mi[data-key="'+c.key+'"]').forEach(el=>el.classList.add('sel'))});
 }
 
 function switchTab(tab,btn){
     currentTab=tab;
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.menu-container').forEach(c=>c.classList.remove('active'));
+    if(btn)btn.classList.add('active');
+    document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
     const el=document.getElementById('tab-'+tab);
     if(el)el.classList.add('active');
 }
 
-function toggleItem(el,key,name,price){
+function toggleItem(key,name,price,el){
     const idx=cart.findIndex(c=>c.key===key);
-    if(idx>=0){cart.splice(idx,1);el.classList.remove('selected')}
-    else{cart.push({key,name,price});el.classList.add('selected')}
+    if(idx>=0){cart.splice(idx,1);el.classList.remove('sel')}
+    else{cart.push({key,name,price:parseFloat(price)});el.classList.add('sel')}
     updateCart();
 }
 
@@ -218,38 +201,33 @@ function updateCart(){
     const total=document.getElementById('cartTotal');
     const c=document.getElementById('cartCount');
     const sum=cart.reduce((s,it)=>s+it.price,0);
-    if(cart.length===0){bar.classList.add('empty');badge.textContent='0';preview.textContent='尚未选择菜品'}
+    if(cart.length===0){bar.classList.add('et');badge.textContent='0';preview.textContent='尚未选择菜品'}
     else{
-        bar.classList.remove('empty');
+        bar.classList.remove('et');
         badge.textContent=cart.length;
-        const names=cart.map(it=>it.name).join('、');
-        preview.textContent=names.length>30?names.slice(0,30)+'…':names;
+        preview.textContent=cart.map(it=>it.name).join('、').slice(0,30)+(cart.map(it=>it.name).join('、').length>30?'…':'');
     }
     total.innerHTML='¥'+sum.toFixed(2)+' <small>已选 '+cart.length+' 项</small>';
     c.textContent=cart.length;
     renderCheckout();
 }
 
-function showCheckout(){if(cart.length===0)return;document.getElementById('checkoutOverlay').classList.add('show');renderCheckout()}
-function closeCheckout(){document.getElementById('checkoutOverlay').classList.remove('show')}
-
+function showCheckout(){if(cart.length===0)return;document.getElementById('checkoutOverlay').classList.add('sh');renderCheckout()}
+function closeCheckout(){document.getElementById('checkoutOverlay').classList.remove('sh')}
 function renderCheckout(){
     const list=document.getElementById('checkoutList');
     const total=document.getElementById('checkoutTotal');
     const sum=cart.reduce((s,it)=>s+it.price,0);
-    if(cart.length===0){list.innerHTML='<div class="empty-cart">🛒 尚未选择菜品</div>';total.textContent='¥0';return}
-    list.innerHTML=cart.map((c,i)=>'<div class="ci"><div class="ci-l"><span class="ci-n">'+c.name+'</span></div><span class="ci-p">¥'+c.price.toFixed(2)+'</span><button class="ci-d" onclick="removeCart('+i+')">✕</button></div>').join('');
+    if(cart.length===0){list.innerHTML='<div class="ec">🛒 尚未选择菜品</div>';total.textContent='¥0';return}
+    list.innerHTML=cart.map((c,i)=>'<div class="c2i"><div class="l"><span class="nm">'+c.name+'</span></div><span class="pr2">¥'+c.price.toFixed(2)+'</span><button class="dl" onclick="removeCart('+i+')">✕</button></div>').join('');
     total.textContent='¥'+sum.toFixed(2);
 }
-
 function removeCart(i){
     const item=cart[i];cart.splice(i,1);
-    document.querySelectorAll('.menu-item[data-key="'+item.key+'"]').forEach(el=>el.classList.remove('selected'));
+    document.querySelectorAll('.mi[data-key="'+item.key+'"]').forEach(el=>el.classList.remove('sel'));
     updateCart();
 }
-
 document.getElementById('checkoutOverlay').addEventListener('click',function(e){if(e.target===this)closeCheckout()});
-
 loadData();
 </script>
 </body>
