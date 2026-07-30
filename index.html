@@ -229,6 +229,12 @@ function removeCart(i){
 }
 document.getElementById('checkoutOverlay').addEventListener('click',function(e){if(e.target===this)closeCheckout()});
 loadData();
+// 自动处理缓存：如果URL没有参数则重定向到带时间戳的版本
+if(window.location.href.indexOf('?')===-1&&window.location.href.indexOf('github.io')>0){
+    setTimeout(function(){
+        window.location.replace(window.location.href+'?v='+new Date().getTime());
+    },100);
+}
 </script>
 </body>
 </html>
