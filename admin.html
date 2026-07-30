@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🔧 菜单管理</title>
+    <title>馃敡 鑿滃崟绠＄悊</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -57,39 +57,39 @@
 </head>
 <body>
 <div class="header">
-    <h1>🔧 菜单管理后台</h1>
-    <p>编辑后导出 data.json 或直接保存到 GitHub</p>
+    <h1>馃敡 鑿滃崟绠＄悊鍚庡彴</h1>
+    <p>缂栬緫鍚庡鍑?data.json 鎴栫洿鎺ヤ繚瀛樺埌 GitHub</p>
 </div>
 <div class="container">
     <div class="card">
-        <div class="card-t">📅 选择日期</div>
+        <div class="card-t">馃搮 閫夋嫨鏃ユ湡</div>
         <div class="card-b"><div class="day-tabs" id="dayTabs"></div></div>
     </div>
     <div class="card">
-        <div class="card-t">🍽️ 选择餐点</div>
+        <div class="card-t">馃嵔锔?閫夋嫨椁愮偣</div>
         <div class="card-b"><div class="meal-tabs" id="mealTabs"></div></div>
     </div>
     <div class="card">
-        <div class="card-t"><span id="editTitle">星期一 · 早餐</span></div>
+        <div class="card-t"><span id="editTitle">鏄熸湡涓€ 路 鏃╅</span></div>
         <div class="card-b edit-area" id="editArea"></div>
-        <div style="padding:0 16px 12px"><button class="btn-line" onclick="addCategory()">➕ 添加新分类</button></div>
+        <div style="padding:0 16px 12px"><button class="btn-line" onclick="addCategory()">鉃?娣诲姞鏂板垎绫?/button></div>
     </div>
     <div class="card">
         <div class="card-b">
             <div class="actions">
-                <button class="btn-excel" onclick="importExcel()">📊 导入Excel</button>
-                <button class="btn-dl" onclick="downloadJSON()">⬇️ 导出 data.json</button>
-                <button class="btn-gh" onclick="saveToGitHub()">⬆️ 保存到 GitHub</button>
-                <button class="btn-rst" onclick="loadFromData()">🔄 重新加载</button>
+                <button class="btn-excel" onclick="importExcel()">馃搳 瀵煎叆Excel</button>
+                <button class="btn-dl" onclick="downloadJSON()">猬囷笍 瀵煎嚭 data.json</button>
+                <button class="btn-gh" onclick="saveToGitHub()">猬嗭笍 淇濆瓨鍒?GitHub</button>
+                <button class="btn-rst" onclick="loadFromData()">馃攧 閲嶆柊鍔犺浇</button>
             </div>
-            <!-- GitHub 配置 -->
+            <!-- GitHub 閰嶇疆 -->
             <div class="gh-config">
-                <label>GitHub Token（第一次使用需要配置，之后自动保存）</label>
+                <label>GitHub Token锛堢涓€娆′娇鐢ㄩ渶瑕侀厤缃紝涔嬪悗鑷姩淇濆瓨锛?/label>
                 <input type="text" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-                <label>仓库名（如 lingzhi1988/canteen-menu）</label>
+                <label>浠撳簱鍚嶏紙濡?lingzhi1988/canteen-menu锛?/label>
                 <input type="text" id="ghRepo" value="lingzhi1988/canteen-menu">
-                <button class="btn-gh-save" onclick="saveToGitHub()">⬆️ 保存到 GitHub</button>
-                <div class="gh-status" id="ghStatus">配置好 Token 后点此按钮，自动更新 data.json</div>
+                <button class="btn-gh-save" onclick="saveToGitHub()">猬嗭笍 淇濆瓨鍒?GitHub</button>
+                <div class="gh-status" id="ghStatus">閰嶇疆濂?Token 鍚庣偣姝ゆ寜閽紝鑷姩鏇存柊 data.json</div>
             </div>
         </div>
     </div>
@@ -97,48 +97,47 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const DAYS=["星期一","星期二","星期三","星期四","星期五"];
+const DAYS=["鏄熸湡涓€","鏄熸湡浜?,"鏄熸湡涓?,"鏄熸湡鍥?,"鏄熸湡浜?];
 const MEALS=["breakfast","lunch","dinner"];
-const MEAL_NAMES={breakfast:"早餐",lunch:"午餐",dinner:"晚餐"};
+const MEAL_NAMES={breakfast:"鏃╅",lunch:"鍗堥",dinner:"鏅氶"};
 let menuData={};
 let curDay=0,curMeal="breakfast";
 
-// ====== 初始化 ======
+// ====== 鍒濆鍖?======
 async function init(){
-    // 从 localStorage 读取 GitHub 配置
+    // 浠?localStorage 璇诲彇 GitHub 閰嶇疆
     const savedToken=localStorage.getItem('gh_token');
     const savedRepo=localStorage.getItem('gh_repo');
     if(savedToken)document.getElementById('ghToken').value=savedToken;
     if(savedRepo)document.getElementById('ghRepo').value=savedRepo;
     
-    // 渲染日期和餐点Tab
+    // 娓叉煋鏃ユ湡鍜岄鐐筎ab
     const dayHtml=DAYS.map((d,i)=>`<button class="day-tab${i===0?' active':''}" onclick="selDay(${i},this)">${d}</button>`).join('');
     document.getElementById('dayTabs').innerHTML=dayHtml;
-    const mealHtml=MEALS.map(m=>`<button class="meal-tab${m==='breakfast'?' active':''}" onclick="selMeal('${m}',this)">${{'breakfast':'🌅 早餐','lunch':'☀️ 午餐','dinner':'🌙 晚餐'}[m]}</button>`).join('');
+    const mealHtml=MEALS.map(m=>`<button class="meal-tab${m==='breakfast'?' active':''}" onclick="selMeal('${m}',this)">${{'breakfast':'馃寘 鏃╅','lunch':'鈽€锔?鍗堥','dinner':'馃寵 鏅氶'}[m]}</button>`).join('');
     document.getElementById('mealTabs').innerHTML=mealHtml;
     
     await loadFromData();
 }
 
-// ====== 数据加载 ======
+// ====== 鏁版嵁鍔犺浇 ======
 async function loadFromData(){
     try{
         const res=await fetch('data.json?'+Date.now());
         menuData=await res.json();
-        showToast('✅ 已从 data.json 加载数据');
+        showToast('鉁?宸蹭粠 data.json 鍔犺浇鏁版嵁');
     }catch(e){
-        showToast('⚠️ data.json 加载失败，使用内置默认数据');
+        showToast('鈿狅笍 data.json 鍔犺浇澶辫触锛屼娇鐢ㄥ唴缃粯璁ゆ暟鎹?);
         menuData=JSON.parse(JSON.stringify(getDefaultData()));
     }
     renderEdit();
 }
 
 function getDefaultData(){
-    // 内置默认数据（精简）
-    return {"星期一":{"breakfast":{"🥗 凉菜":[{"name":"炝拌茴子白丝","price":0.2}]}},"星期二":{"breakfast":{"🥗 凉菜":[{"name":"炝拌黑咸菜丝","price":0.5}]}},"星期三":{"breakfast":{"🥗 凉菜":[{"name":"炝拌卷心菜","price":0.2}]}},"星期四":{"breakfast":{"🥗 凉菜":[{"name":"四川泡菜","price":0.5}]}},"星期五":{"breakfast":{"🥗 凉菜":[{"name":"炝拌圆白菜","price":0.2}]}}};
+    // 鍐呯疆榛樿鏁版嵁锛堢簿绠€锛?    return {"鏄熸湡涓€":{"breakfast":{"馃 鍑夎彍":[{"name":"鐐濇媽鑼村瓙鐧戒笣","price":0.2}]}},"鏄熸湡浜?:{"breakfast":{"馃 鍑夎彍":[{"name":"鐐濇媽榛戝捀鑿滀笣","price":0.5}]}},"鏄熸湡涓?:{"breakfast":{"馃 鍑夎彍":[{"name":"鐐濇媽鍗峰績鑿?,"price":0.2}]}},"鏄熸湡鍥?:{"breakfast":{"馃 鍑夎彍":[{"name":"鍥涘窛娉¤彍","price":0.5}]}},"鏄熸湡浜?:{"breakfast":{"馃 鍑夎彍":[{"name":"鐐濇媽鍦嗙櫧鑿?,"price":0.2}]}}};
 }
 
-// ====== 切换 ======
+// ====== 鍒囨崲 ======
 function selDay(idx,btn){
     curDay=idx;
     document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
@@ -152,7 +151,7 @@ function selMeal(meal,btn){
     renderEdit();
 }
 
-// ====== 获取当前数据 ======
+// ====== 鑾峰彇褰撳墠鏁版嵁 ======
 function getMealData(){
     const day=DAYS[curDay];
     if(!menuData[day])menuData[day]={};
@@ -163,27 +162,27 @@ function setMealData(data){
     menuData[DAYS[curDay]][curMeal]=data;
 }
 
-// ====== 渲染编辑区 ======
+// ====== 娓叉煋缂栬緫鍖?======
 function renderEdit(){
-    document.getElementById('editTitle').textContent=DAYS[curDay]+' · '+MEAL_NAMES[curMeal];
+    document.getElementById('editTitle').textContent=DAYS[curDay]+' 路 '+MEAL_NAMES[curMeal];
     const area=document.getElementById('editArea');
     const data=getMealData();
     const keys=Object.keys(data);
     if(keys.length===0){
-        area.innerHTML='<div class="empty-state">暂无分类，点击下方添加</div>';
+        area.innerHTML='<div class="empty-state">鏆傛棤鍒嗙被锛岀偣鍑讳笅鏂规坊鍔?/div>';
         return;
     }
     let html='';
     keys.forEach((cat,ci)=>{
-        html+=`<div class="cat-box"><div class="cat-h"><span>${cat}</span><button class="btn-d" onclick="delCat(${ci})">✕</button></div>`;
+        html+=`<div class="cat-box"><div class="cat-h"><span>${cat}</span><button class="btn-d" onclick="delCat(${ci})">鉁?/button></div>`;
         (data[cat]||[]).forEach((item,ii)=>{
             html+=`<div class="ir">
                 <input type="text" value="${item.name}" onchange="editItem(${ci},${ii},'name',this.value)">
                 <input type="number" value="${item.price}" step="0.1" onchange="editItem(${ci},${ii},'price',parseFloat(this.value)||0)">
-                <button class="btn-di" onclick="delItem(${ci},${ii})">✕</button>
+                <button class="btn-di" onclick="delItem(${ci},${ii})">鉁?/button>
             </div>`;
         });
-        html+=`<button class="btn-line" onclick="addItem(${ci})">➕ 添加菜品</button></div>`;
+        html+=`<button class="btn-line" onclick="addItem(${ci})">鉃?娣诲姞鑿滃搧</button></div>`;
     });
     area.innerHTML=html;
 }
@@ -195,7 +194,7 @@ function editItem(ci,ii,field,val){
     setMealData(data);
 }
 function delCat(ci){
-    if(!confirm('删除此分类？'))return;
+    if(!confirm('鍒犻櫎姝ゅ垎绫伙紵'))return;
     const data=getMealData();
     const keys=Object.keys(data);
     delete data[keys[ci]];
@@ -203,7 +202,7 @@ function delCat(ci){
     renderEdit();
 }
 function delItem(ci,ii){
-    if(!confirm('删除此菜品？'))return;
+    if(!confirm('鍒犻櫎姝よ彍鍝侊紵'))return;
     const data=getMealData();
     const keys=Object.keys(data);
     data[keys[ci]].splice(ii,1);
@@ -214,12 +213,12 @@ function delItem(ci,ii){
 function addItem(ci){
     const data=getMealData();
     const keys=Object.keys(data);
-    data[keys[ci]].push({name:'新菜品',price:0});
+    data[keys[ci]].push({name:'鏂拌彍鍝?,price:0});
     setMealData(data);
     renderEdit();
 }
 function addCategory(){
-    const name=prompt('分类名称（如：🥗 凉菜）：');
+    const name=prompt('鍒嗙被鍚嶇О锛堝锛氿煡?鍑夎彍锛夛細');
     if(!name||!name.trim())return;
     const data=getMealData();
     data[name.trim()]=[];
@@ -227,7 +226,7 @@ function addCategory(){
     renderEdit();
 }
 
-// ====== 导入Excel ======
+// ====== 瀵煎叆Excel ======
 function importExcel(){
     const input=document.createElement('input');
     input.type='file';
@@ -242,7 +241,7 @@ function importExcel(){
                 const wb=XLSX.read(data,{type:'array'});
                 const json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
                 parseExcel(json);
-            }catch(err){showToast('❌ 解析失败：'+err.message)}
+            }catch(err){showToast('鉂?瑙ｆ瀽澶辫触锛?+err.message)}
         };
         reader.readAsArrayBuffer(file);
     };
@@ -250,16 +249,44 @@ function importExcel(){
 }
 
 function parseExcel(rows){
-    const mealMap={'早餐':'breakfast','午餐':'lunch','晚餐':'dinner'};
+    const mealMap={'鏃╅':'breakfast','鍗堥':'lunch','鏅氶':'dinner'};
     let meal=null,cat=null;
+    
+    // 鍏堟竻绌烘暟鎹紙瀹屽叏鏇挎崲锛?    menuData={};
+    DAYS.forEach(d=>{menuData[d]={breakfast:{},lunch:{},dinner:{}}});
+    
     for(let i=1;i<rows.length;i++){
         const r=rows[i];
         if(!r||r.length<4)continue;
         const c0=(r[0]||'').toString().trim();
         const c1=(r[1]||'').toString().trim();
-        if(mealMap[c0]){meal=mealMap[c0];cat=c1||null;continue;}
+        const c2=(r[2]||'').toString().trim();
+        
+        // 妫€娴嬮鐐硅锛堟棭椁?鍗堥/鏅氶锛?        if(mealMap[c0]){
+            meal=mealMap[c0];
+            // 濡傛灉绗?鍒楁槸鍒嗙被鍚嶏紙濡?鍑夎彍"锛夛紝璁剧疆褰撳墠鍒嗙被
+            if(c1&&!mealMap[c1]&&c1!=='鏄熸湡涓€'&&c1!=='鏄熸湡浜?&&c1!=='鏄熸湡涓?&&c1!=='鏄熸湡鍥?&&c1!=='鏄熸湡浜?){
+                cat=c1;
+                if(c2) cat=c1+'路'+c2; // 瀛愬垎绫伙細濡?鐑彍路鑽よ彍
+            }
+            continue;
+        }
         if(!meal)continue;
-        if(c0===''&&c1&&r[3]){cat=c1;}
+        
+        // 妫€娴嬪垎绫昏锛氱1鍒椾负绌猴紝绗?鍒楁湁鍊硷紙濡?鍑夎彍""鐑彍""涓婚"绛夛級
+        if(c0===''&&c1){
+            // 妫€鏌ョ2鍒楁槸鍚︽槸鑿滃搧鍚嶏紙濡傛灉鏄彍鍝佸悕鍒欎笉鏄垎绫伙級
+            // 鍒嗙被琛岀殑鐗圭偣鏄2鍒楃煭锛屼笖绗?鍒椾负绌猴紝绗?鍒楁槸鑿滃搧
+            if(c1.length<=4&&!c2&&r[3]&&r[3].toString().trim()){
+                cat=c1;
+            }else if(c1.length<=4&&c2){
+                // 绗?鍒楁湁鍊硷紝鍙兘鏄瓙鍒嗙被
+                cat=c1+'路'+c2;
+            }else if(c1.length>4&&!c2){
+                // 绗?鍒楀緢闀夸絾绗?鍒椾负绌猴紝鍙兘鏄┖琛?            }
+        }
+        
+        // 瑙ｆ瀽鍛ㄤ竴鍒板懆浜旂殑鑿滃搧
         for(let j=3;j<Math.min(r.length,8);j++){
             const cell=(r[j]||'').toString().trim();
             if(!cell)continue;
@@ -268,20 +295,68 @@ function parseExcel(rows){
             const day=DAYS[dayIdx];
             if(!menuData[day])menuData[day]={};
             if(!menuData[day][meal])menuData[day][meal]={};
-            const catName=cat||'其他';
+            const catName=cat||'鍏朵粬';
             if(!menuData[day][meal][catName])menuData[day][meal][catName]=[];
-            const m=cell.match(/(.+?)([\d.]+)$/);
-            const name=m?m[1].trim():cell;
-            const price=m?parseFloat(m[2]):0;
-            if(!menuData[day][meal][catName].some(ex=>ex.name===name))
-                menuData[day][meal][catName].push({name,price});
+            
+            // 鎸夋崲琛岀鍒嗗壊鍗曞厓鏍硷紙涓€涓崟鍏冩牸鍙兘鏈夊涓彍鍝侊級
+            const lines=cell.split('\n');
+            lines.forEach(line=>{
+                line=line.trim();
+                if(!line)return;
+                // 鎸?"/" 鍒嗗壊涓嶅悓鐨勮彍鍝侊紙濡?璞嗘祮1/鐗涘ザ2.5"锛?                const parts=line.split('/');
+                parts.forEach(part=>{
+                    part=part.trim();
+                    if(!part)return;
+                    // 鎻愬彇鑿滃搧鍚嶅拰浠锋牸
+                    const items=extractItems(part);
+                    items.forEach(item=>{
+                        if(!menuData[day][meal][catName].some(ex=>ex.name===item.name))
+                            menuData[day][meal][catName].push(item);
+                    });
+                });
+            });
         }
     }
+    
     renderEdit();
-    showToast('✅ Excel导入成功！请导出 data.json 或保存到 GitHub');
+    showToast('鉁?Excel瀵煎叆鎴愬姛锛佽瀵煎嚭 data.json 鎴栦繚瀛樺埌 GitHub');
 }
 
-// ====== 导出 data.json ======
+function extractItems(str){
+    // 澶勭悊鍚勭浠锋牸鏍煎紡
+    const results=[];
+    
+    // 澶勭悊 "澶 灏廦" 鏍煎紡锛堝彇澶т唤浠锋牸锛?    const sizeMatch=str.match(/澶?[\d.]+)\s*灏廩\d.]+/);
+    if(sizeMatch){
+        results.push({name:str.replace(/\(?澶\d.]+\s*灏廩\d.]+\)?/g,'').replace(/[锛?]/g,'').trim(),price:parseFloat(sizeMatch[1])});
+        return results;
+    }
+    
+    // 澶勭悊鏅€?"鍚嶇О+浠锋牸" 鏍煎紡
+    // 鍏堝皾璇曚粠鏈熬鎻愬彇浠锋牸
+    const m=str.match(/^(.+?)\s*([\d.]+)$/);
+    if(m&&m[1].trim()){
+        results.push({name:m[1].trim(),price:parseFloat(m[2])});
+        return results;
+    }
+    
+    // 澶勭悊 "鍚嶇ОX/浠? 鎴?"鍚嶇ОX/涓? 绛夛紙浠锋牸鍚庢湁鍗曚綅锛?    const m2=str.match(/^(.+?)\s*([\d.]+)\s*\/.*$/);
+    if(m2&&m2[1].trim()){
+        results.push({name:m2[1].trim(),price:parseFloat(m2[2])});
+        return results;
+    }
+    
+    // 鏃犳硶鎻愬彇浠锋牸锛屼綔涓烘棤浠锋牸鑿滃搧
+    // 鍘绘帀鏁板瓧鍚庣紑
+    const nameOnly=str.replace(/[\d.]+/g,'').replace(/[\/\\]/g,'').trim();
+    if(nameOnly){
+        results.push({name:nameOnly,price:0});
+    }
+    
+    return results;
+}
+
+// ====== 瀵煎嚭 data.json ======
 function downloadJSON(){
     const json=JSON.stringify(menuData,null,2);
     const blob=new Blob([json],{type:'application/json'});
@@ -289,30 +364,29 @@ function downloadJSON(){
     a.href=URL.createObjectURL(blob);
     a.download='data.json';
     a.click();
-    showToast('✅ data.json 已下载');
+    showToast('鉁?data.json 宸蹭笅杞?);
 }
 
-// ====== 保存到 GitHub ======
+// ====== 淇濆瓨鍒?GitHub ======
 async function saveToGitHub(){
     const token=document.getElementById('ghToken').value.trim();
     const repo=document.getElementById('ghRepo').value.trim();
     if(!token||!repo){
-        showToast('⚠️ 请先填写 GitHub Token 和仓库名');
+        showToast('鈿狅笍 璇峰厛濉啓 GitHub Token 鍜屼粨搴撳悕');
         return;
     }
-    // 保存配置
+    // 淇濆瓨閰嶇疆
     localStorage.setItem('gh_token',token);
     localStorage.setItem('gh_repo',repo);
     
     const status=document.getElementById('ghStatus');
-    status.textContent='⏳ 正在保存到 GitHub...';
+    status.textContent='鈴?姝ｅ湪淇濆瓨鍒?GitHub...';
     
     try{
         const json=JSON.stringify(menuData,null,2);
         const content=btoa(unescape(encodeURIComponent(json)));
         
-        // 先获取当前文件的 SHA（如果是更新已有文件）
-        let sha=null;
+        // 鍏堣幏鍙栧綋鍓嶆枃浠剁殑 SHA锛堝鏋滄槸鏇存柊宸叉湁鏂囦欢锛?        let sha=null;
         try{
             const getRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
                 headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}
@@ -323,8 +397,8 @@ async function saveToGitHub(){
             }
         }catch(e){}
         
-        // 上传/更新文件
-        const body={message:'更新菜单数据',content:content};
+        // 涓婁紶/鏇存柊鏂囦欢
+        const body={message:'鏇存柊鑿滃崟鏁版嵁',content:content};
         if(sha)body.sha=sha;
         
         const res=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
@@ -334,16 +408,16 @@ async function saveToGitHub(){
         });
         
         if(res.ok){
-            status.textContent='✅ 已保存到 GitHub！员工刷新即可看到新菜单';
-            showToast('✅ 已保存到 GitHub！');
+            status.textContent='鉁?宸蹭繚瀛樺埌 GitHub锛佸憳宸ュ埛鏂板嵆鍙湅鍒版柊鑿滃崟';
+            showToast('鉁?宸蹭繚瀛樺埌 GitHub锛?);
         }else{
             const err=await res.json();
-            status.textContent='❌ 保存失败：'+err.message;
-            showToast('❌ 保存失败');
+            status.textContent='鉂?淇濆瓨澶辫触锛?+err.message;
+            showToast('鉂?淇濆瓨澶辫触');
         }
     }catch(e){
-        status.textContent='❌ 保存失败：'+e.message;
-        showToast('❌ 保存失败');
+        status.textContent='鉂?淇濆瓨澶辫触锛?+e.message;
+        showToast('鉂?淇濆瓨澶辫触');
     }
 }
 
